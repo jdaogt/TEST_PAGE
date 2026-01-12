@@ -23,12 +23,19 @@ Partial Public Class ConsumirWeb
     Protected WithEvents form1 As Global.System.Web.UI.HtmlControls.HtmlForm
     Protected WithEvents rci As Global.System.Web.UI.WebControls.TextBox
     Protected WithEvents rdg As Global.System.Web.UI.WebControls.TextBox
-    Protected WithEvents totalCuotasDirectas As Global.System.Web.UI.WebControls.TextBox
     Protected WithEvents noCuota As Global.System.Web.UI.WebControls.TextBox
-    Protected WithEvents valorDif As Global.System.Web.UI.WebControls.TextBox
-    Protected WithEvents valorDifSub As Global.System.Web.UI.WebControls.TextBox
-    Protected WithEvents rciDif As Global.System.Web.UI.WebControls.TextBox
-    Protected WithEvents rciDifSub As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents rci1al48 As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents rci1al48Total As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents rci49al84 As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents rci49al84Total As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents rci85mas As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents rci85masTotal As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents cuota1al48Cliente As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents cuota1al48Total As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents cuota49al84Cliente As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents cuota49al84Total As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents cuota85masCliente As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents cuota85masTotal As Global.System.Web.UI.WebControls.TextBox
     Protected WithEvents detalle As Global.System.Web.UI.WebControls.Label
     Protected WithEvents montoSolicitado As Global.System.Web.UI.WebControls.TextBox
     Protected WithEvents destinoCredito As Global.System.Web.UI.WebControls.DropDownList
@@ -84,5 +91,17 @@ Partial Public Class ConsumirWeb
     Protected WithEvents bonificacionActividadEconomica2 As Global.System.Web.UI.WebControls.TextBox
     Protected WithEvents isrActividadEconomica2 As Global.System.Web.UI.WebControls.TextBox
     Protected WithEvents comisionesActividadEconomica2 As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents lblPlazoAdvertencia As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblCapital As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblIntereses As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblCuotaSinSeguros As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblSeguroVida As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblSeguroDanios As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblCuotaTotal As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblCuotasVigentes As Global.System.Web.UI.WebControls.Label 
+    Protected WithEvents lblEndeudamientoInterno As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblEndeudamientoExterno As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents tipoCuota As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents tasaReferenciaLIP As Global.System.Web.UI.WebControls.TextBox
 
 End Class

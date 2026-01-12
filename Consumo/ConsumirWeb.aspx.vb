@@ -22,8 +22,8 @@ Partial Class ConsumirWeb
 
     Public Function ConsumirServicio() As Task
         Dim client As New HttpClient()
-        'Dim url As String = "http://cotizador.esol.com/Cotizador/PrecalificacionCreditos.asmx/ObtenerDatos"
-        Dim url As String = ConfigurationManager.AppSettings("webServiceUrl")
+        Dim url As String = "http://172.16.20.89:84/preCalificador.asmx/ObtenerDatos"
+        'Dim url As String = ConfigurationManager.AppSettings("webServiceUrl")
 
         Try
             client.Timeout = TimeSpan.FromSeconds(30)
@@ -47,7 +47,9 @@ Partial Class ConsumirWeb
                     "&strIgssActividadEconomica2=" + iggsActividadEconomica2.Text +
                     "&strIsrActividadEconomica2=" + isrActividadEconomica2.Text +
                     "&strComisionesActividadEconomica=" + comisionesActividadEconomica.Text +
-                    "&strComisionesActividadEconomica2=" + comisionesActividadEconomica2.Text
+                    "&strComisionesActividadEconomica2=" + comisionesActividadEconomica2.Text +
+                    "&strTasaInteres=" + tasaInteres.Text + "&strTipoCuota=" + tipoCuota.SelectedValue +
+                    "&strTasaReferenciaLIP=" + tasaReferenciaLIP.Text
 
             Dim response As HttpResponseMessage = client.GetAsync(url).Result
 
@@ -71,15 +73,15 @@ Partial Class ConsumirWeb
                 'Dim igssActividadEconomica2 As String = xmlDoc.SelectSingleNode("//igssActividadEconomica2").InnerText
                 'Dim isrActividadEconomica2 As String = xmlDoc.SelectSingleNode("//isrActividadEconomica2").InnerText
                 Dim cuota As String = xmlDoc.SelectSingleNode("//cuota").InnerText
-                totalCuotasDirectas.Text = xmlDoc.SelectSingleNode("//totalCuentasDirectas").InnerText
+                ' totalCuotasDirectas ya no se usa, se eliminó del frontend
                 Dim valorGarantiaHipotecaria As String = xmlDoc.SelectSingleNode("//valorGarantiaHipotecaria").InnerText
                 rdg.Text = xmlDoc.SelectSingleNode("//rdg").InnerText
-                Dim valores As String = xmlDoc.SelectSingleNode("//valorDiferente").InnerText
-                Dim rcis As String = xmlDoc.SelectSingleNode("//rciDiferente").InnerText
+                ' Los campos valorDiferente y rciDiferente ya no se usan, se reemplazaron por los nuevos campos RCI
                 Dim trfLip As String = xmlDoc.SelectSingleNode("//trfLip").InnerText
+                ' Mostrar el detalle
                 detalle.Text = xmlDoc.SelectSingleNode("//detalle").InnerText
                 plazoMeses.Text = xmlDoc.SelectSingleNode("//plazoMeses").InnerText
-                tasaInteres.Text = xmlDoc.SelectSingleNode("//tasaInteres").InnerText
+                tasaInteres.Text = xmlDoc.SelectSingleNode("//tasaInteres").InnerText.Replace("%", "")
                 bonificacionActividadEconomica.Text = xmlDoc.SelectSingleNode("//bonificacionActividadEconomica").InnerText
                 isrActividadEconomica.Text = xmlDoc.SelectSingleNode("//isrActividadEconomica").InnerText
                 iggsActividadEconomica.Text = xmlDoc.SelectSingleNode("//igssActividadEconomica").InnerText
@@ -87,22 +89,178 @@ Partial Class ConsumirWeb
                 isrActividadEconomica2.Text = xmlDoc.SelectSingleNode("//isrActividadEconomica2").InnerText
                 iggsActividadEconomica2.Text = xmlDoc.SelectSingleNode("//igssActividadEconomica2").InnerText
 
-                If Not String.IsNullOrEmpty(valores) Then
-                    valorDif.Text = valores.Split("|"c)(0)
-                    valorDifSub.Text = valores.Split("|"c)(1)
+                ' Mostrar mensaje de advertencia si existe
+                lblPlazoAdvertencia.Text = xmlDoc.SelectSingleNode("//plazoAdvertencia").InnerText
+
+                ' Procesar los nuevos campos RCI según plazo
+                If xmlDoc.SelectSingleNode("//rci1al48") IsNot Nothing Then
+                    rci1al48.Text = xmlDoc.SelectSingleNode("//rci1al48").InnerText
                 End If
-                If Not String.IsNullOrEmpty(rcis) Then
-                    rciDif.Text = rcis.Split("|"c)(0)
-                    rciDifSub.Text = rcis.Split("|"c)(1)
+                If xmlDoc.SelectSingleNode("//rci1al48Total") IsNot Nothing Then
+                    rci1al48Total.Text = xmlDoc.SelectSingleNode("//rci1al48Total").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//rci49al84") IsNot Nothing Then
+                    rci49al84.Text = xmlDoc.SelectSingleNode("//rci49al84").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//rci49al84Total") IsNot Nothing Then
+                    rci49al84Total.Text = xmlDoc.SelectSingleNode("//rci49al84Total").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//rci85mas") IsNot Nothing Then
+                    rci85mas.Text = xmlDoc.SelectSingleNode("//rci85mas").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//rci85masTotal") IsNot Nothing Then
+                    rci85masTotal.Text = xmlDoc.SelectSingleNode("//rci85masTotal").InnerText
                 End If
 
+                ' Procesar los campos de cuota
+                If xmlDoc.SelectSingleNode("//cuota1al48Cliente") IsNot Nothing Then
+                    cuota1al48Cliente.Text = xmlDoc.SelectSingleNode("//cuota1al48Cliente").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//cuota1al48Total") IsNot Nothing Then
+                    cuota1al48Total.Text = xmlDoc.SelectSingleNode("//cuota1al48Total").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//cuota49al84Cliente") IsNot Nothing Then
+                    cuota49al84Cliente.Text = xmlDoc.SelectSingleNode("//cuota49al84Cliente").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//cuota49al84Total") IsNot Nothing Then
+                    cuota49al84Total.Text = xmlDoc.SelectSingleNode("//cuota49al84Total").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//cuota85masCliente") IsNot Nothing Then
+                    cuota85masCliente.Text = xmlDoc.SelectSingleNode("//cuota85masCliente").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//cuota85masTotal") IsNot Nothing Then
+                    cuota85masTotal.Text = xmlDoc.SelectSingleNode("//cuota85masTotal").InnerText
+                End If
+
+                ' Mostrar los cálculos de endeudamiento
+                If xmlDoc.SelectSingleNode("//endeudamiento1") IsNot Nothing Then
+                    cuotaDeuda1.Text = xmlDoc.SelectSingleNode("//endeudamiento1").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//endeudamiento2") IsNot Nothing Then
+                    cuotaDeuda2.Text = xmlDoc.SelectSingleNode("//endeudamiento2").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//endeudamiento3") IsNot Nothing Then
+                    cuotaDeuda3.Text = xmlDoc.SelectSingleNode("//endeudamiento3").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//endeudamiento4") IsNot Nothing Then
+                    cuotaDeuda4.Text = xmlDoc.SelectSingleNode("//endeudamiento4").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//endeudamiento5") IsNot Nothing Then
+                    cuotaDeuda5.Text = xmlDoc.SelectSingleNode("//endeudamiento5").InnerText
+                End If
+                If xmlDoc.SelectSingleNode("//endeudamiento6") IsNot Nothing Then
+                    cuotaDeuda6.Text = xmlDoc.SelectSingleNode("//endeudamiento6").InnerText
+                End If
+
+                ' Desglose de cuota
+                Dim seguroVida As Decimal = 0
+                Dim seguroDanios As Decimal = 0
+                Dim cuotaSinSeguros As Decimal = 0
+                Dim capital As Decimal = 0
+                Dim intereses As Decimal = 0
+                Dim cuotaTotal As Decimal = 0
+                Dim cuotasVigentes As Decimal = 0
+                Dim endeudamientoInterno As Decimal = 0
+                Dim endeudamientoExterno As Decimal = 0
+
+                If xmlDoc.SelectSingleNode("//seguroVida") IsNot Nothing Then
+                    Decimal.TryParse(xmlDoc.SelectSingleNode("//seguroVida").InnerText, seguroVida)
+                End If
+                If xmlDoc.SelectSingleNode("//seguroDanios") IsNot Nothing Then
+                    Decimal.TryParse(xmlDoc.SelectSingleNode("//seguroDanios").InnerText, seguroDanios)
+                End If
+                If xmlDoc.SelectSingleNode("//cuota") IsNot Nothing Then
+                    Decimal.TryParse(xmlDoc.SelectSingleNode("//cuota").InnerText, cuotaSinSeguros)
+                End If
+                If xmlDoc.SelectSingleNode("//endeudamientoInterno") IsNot Nothing Then
+                    Decimal.TryParse(xmlDoc.SelectSingleNode("//endeudamientoInterno").InnerText, endeudamientoInterno)
+                End If
+                If xmlDoc.SelectSingleNode("//endeudamientoExterno") IsNot Nothing Then
+                    Decimal.TryParse(xmlDoc.SelectSingleNode("//endeudamientoExterno").InnerText, endeudamientoExterno)
+                End If
+
+                cuotaTotal = cuotaSinSeguros + seguroVida + seguroDanios
+                cuotasVigentes = cuotaTotal + endeudamientoInterno + endeudamientoExterno
+
+                ' Cálculo de capital e intereses del primer mes
+                Dim monto As Decimal = 0
+                Dim tasaAnual As Decimal = 0
+                Dim plazoMesesInt As Integer = 0
+                Dim tasaMensual As Decimal = 0
+
+                Decimal.TryParse(montoSolicitado.Text, monto)
+                Decimal.TryParse(tasaInteres.Text, tasaAnual)
+                Integer.TryParse(plazoMeses.Text, plazoMesesInt)
+
+                tasaAnual = tasaAnual / 100D ' Convertir a decimal
+                tasaMensual = tasaAnual / 12D
+
+                Dim tipoCuotaSeleccionada As String = tipoCuota.SelectedValue.ToLower()
+                Dim capitalPrimerMes As Decimal = 0
+                Dim interesPrimerMes As Decimal = 0
+                If tipoCuotaSeleccionada = "saldos" Then
+                    If plazoMesesInt > 0 Then
+                        capitalPrimerMes = monto / plazoMesesInt
+                    End If
+                    interesPrimerMes = monto * tasaAnual / 360D * 30D
+                    cuotaSinSeguros = capitalPrimerMes + interesPrimerMes
+                Else
+                    interesPrimerMes = monto * tasaMensual
+                    capitalPrimerMes = cuotaSinSeguros - interesPrimerMes
+                End If
+                lblCapital.Text = capitalPrimerMes.ToString("N2")
+                lblIntereses.Text = interesPrimerMes.ToString("N2")
+                lblCuotaSinSeguros.Text = cuotaSinSeguros.ToString("N2")
+                lblSeguroVida.Text = seguroVida.ToString("N2")
+                lblSeguroDanios.Text = seguroDanios.ToString("N2")
+                lblCuotaTotal.Text = cuotaTotal.ToString("N2")
+                lblCuotasVigentes.Text = cuotasVigentes.ToString("N2")
+                lblEndeudamientoInterno.Text = endeudamientoInterno.ToString("N2")
+                lblEndeudamientoExterno.Text = endeudamientoExterno.ToString("N2")
 
                 If plazoMesesEnviado > 0 And plazoMesesEnviado > Convert.ToDecimal(plazoMeses.Text) Then
                     ScriptManager.RegisterStartupScript(Me, Me.GetType(), "ShowModal", "$('#modalAdvertencia').modal('show');", True)
                     ScriptManager.RegisterStartupScript(Me, Me.GetType(), "alert", "alert('Cuota alta');", True)
-
                 End If
 
+                ' Script para aplicar colores a los campos después del postback
+                ScriptManager.RegisterStartupScript(Me, Me.GetType(), "ApplyColors", "
+                    setTimeout(function() {
+                        // Aplicar color al scorePredictivo
+                        var txt = document.getElementById('scorePredictivo');
+                        if (txt && txt.value !== '') {
+                            var value = parseFloat(txt.value);
+                            if (!isNaN(value)) {
+                                if (value >= 0 && value <= 565) {
+                                    txt.style.backgroundColor = '#ffcccc'; // Rojo claro
+                                } else if (value < 0) {
+                                    txt.style.backgroundColor = '#ffffcc'; // Amarillo claro
+                                } else {
+                                    txt.style.backgroundColor = '#ccffcc'; // Verde claro
+                                }
+                            }
+                        }
+                        
+                        // Aplicar color al clasificacionSIB
+                        var sib = document.getElementById('clasificacionSIB');
+                        if (sib && sib.value !== '') {
+                            var valor = sib.value;
+                            if (valor === 'A') {
+                                sib.style.backgroundColor = '#ccffcc'; // Verde claro
+                            } else if (valor === 'B') {
+                                sib.style.backgroundColor = '#ffffcc'; // Amarillo claro
+                            } else {
+                                sib.style.backgroundColor = '#ffcccc'; // Rojo claro
+                            }
+                        }
+                        
+                        // Aplicar color al conteoCCR
+                        var ccr = document.getElementById('conteoCCR');
+                        if (ccr && ccr.value !== '') {
+                            ccr.style.backgroundColor = '#ffcccc'; // Rojo claro
+                        }
+                    }, 100);
+                ", True)
 
             Else
                 Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}")
@@ -117,18 +275,39 @@ Partial Class ConsumirWeb
     End Sub
 
     <System.Web.Services.WebMethod()>
-    Public Shared Function ObtenerListaArchivos() As List(Of String)
-        Dim strArchivos = New List(Of String)
+    Public Shared Function ObtenerListaArchivos() As List(Of Object)
+        Dim strArchivos = New List(Of Object)
         Dim strRuta As String
 
         strRuta = ConfigurationManager.AppSettings("pathArchivos")
 
         If Directory.Exists(strRuta) Then
-            strArchivos = Directory.GetFiles(strRuta, "*.xml").Select(Function(f) Path.GetFileName(f)).ToList()
+            Dim archivos = Directory.GetFiles(strRuta, "*.xml").Select(Function(f) Path.GetFileName(f))
+            For Each archivo In archivos
+                Dim descripcion As String = ""
+                Select Case archivo.ToLower()
+                    Case "plazomeses_tipogarantia.xml"
+                        descripcion = "Define los plazos máximos en meses para cada tipo de garantía"
+                    Case "igss_isr.xml"
+                        descripcion = "Contiene los porcentajes de IGSS e ISR aplicables"
+                    Case "plazotasa_tipodeuda.xml"
+                        descripcion = "Define los plazos y tasas promedio para cada tipo de deuda"
+                    Case "polizaseguro.xml"
+                        descripcion = "Contiene los parámetros para el cálculo de pólizas de seguro"
+                    Case "tasas.xml"
+                        descripcion = "Define las tasas de interés para cada tipo de préstamo"
+                    Case Else
+                        descripcion = "Archivo de configuración del sistema"
+                End Select
+
+                strArchivos.Add(New With {
+                    .Nombre = archivo,
+                    .Descripcion = descripcion
+                })
+            Next
         End If
 
         Return strArchivos
-
     End Function
 
 
